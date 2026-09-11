@@ -1,0 +1,76 @@
+/* Almanac — warm paper, ink, serif numerals. Area colours carry the data. */
+
+:root {
+  --font-serif: 'Instrument Serif', 'Iowan Old Style', 'Palatino', Georgia, serif;
+  --font-sans: 'Instrument Sans Variable', 'Instrument Sans', ui-sans-serif, -apple-system, 'Segoe UI', system-ui, sans-serif;
+
+  --bg: #f4f1ea;
+  --bg-raised: #fbfaf6;
+  --bg-sunken: #ebe7de;
+  --bg-hover: rgba(40, 32, 20, 0.045);
+  --bg-press: rgba(40, 32, 20, 0.08);
+  --ink: #1d1b18;
+  --ink-2: #4b463f;
+  --ink-3: #857f75;
+  --ink-4: #b5afa4;
+  --line: rgba(40, 32, 20, 0.085);
+  --line-2: rgba(40, 32, 20, 0.15);
+  --accent: #cf5a2e;
+  --accent-ink: #fff;
+  --focus: rgba(207, 90, 46, 0.45);
+  --cell-off: #e6e1d7;
+  --cell-missed: rgba(40, 32, 20, 0.16);
+  --shadow-sheet: 0 1px 0 rgba(40, 32, 20, 0.04), 0 24px 60px -20px rgba(40, 32, 20, 0.35);
+  --shadow-pop: 0 1px 2px rgba(40, 32, 20, 0.06), 0 12px 32px -12px rgba(40, 32, 20, 0.28);
+  --scrim: rgba(29, 27, 24, 0.22);
+  --grain-opacity: 0.35;
+
+  --sage: #6c9160;
+  --ocean: #3d72a6;
+  --ember: #cc5f30;
+  --plum: #8b5a9f;
+  --ochre: #bb8a26;
+  --rose: #c25a72;
+  --teal: #2d8a82;
+  --slate: #5d6a79;
+
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #151412;
+  --bg-raised: #1c1a17;
+  --bg-sunken: #100f0d;
+  --bg-hover: rgba(255, 244, 225, 0.045);
+  --bg-press: rgba(255, 244, 225, 0.08);
+  --ink: #ede8df;
+  --ink-2: #bcb5a9;
+  --ink-3: #847d72;
+  --ink-4: #55504a;
+  --line: rgba(255, 244, 225, 0.075);
+  --line-2: rgba(255, 244, 225, 0.14);
+  --accent: #ec7f50;
+  --accent-ink: #1a1512;
+  --focus: rgba(236, 127, 80, 0.5);
+  --cell-off: #221f1b;
+  --cell-missed: rgba(255, 244, 225, 0.12);
+  --shadow-sheet: 0 0 0 1px rgba(255, 244, 225, 0.06), 0 30px 80px -20px rgba(0, 0, 0, 0.7);
+  --shadow-pop: 0 0 0 1px rgba(255, 244, 225, 0.07), 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+  --scrim: rgba(0, 0, 0, 0.45);
+  --grain-opacity: 0.18;
+
+  --sage: #8fb781;
+  --ocean: #6d9fd2;
+  --ember: #e98555;
+  --plum: #b588c8;
+  --ochre: #d9ad4c;
+  --rose: #de8499;
+  --teal: #5ab4aa;
+  --slate: #8d9aab;
+  color-scheme: dark;
+}
