@@ -6,12 +6,18 @@ import '@fontsource-variable/instrument-sans/wght.css'
 import './styles/tokens.css'
 import './styles/app.css'
 import { App } from './App'
+import { initAuth } from './store/auth'
 import { startPersistence } from './store/persist'
 
-startPersistence().then(() => {
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <App />
-    </StrictMode>,
-  )
-})
+// Auth resolves first so startPersistence loads the right account's namespace
+// immediately — nothing renders in between, so no account's data ever flashes
+// on screen before the correct one is known.
+initAuth()
+  .then((userId) => startPersistence(userId))
+  .then(() => {
+    createRoot(document.getElementById('root')!).render(
+      <StrictMode>
+        <App />
+      </StrictMode>,
+    )
+  })

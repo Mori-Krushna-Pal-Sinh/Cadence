@@ -1,8 +1,9 @@
-import { Download, HardDrive, Plus, Trash2, Upload } from 'lucide-react'
+import { Download, HardDrive, LogIn, LogOut, Mail, Plus, Trash2, Upload } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { todayKey } from '../domain/dates'
 import { activitiesCSV, completionsCSV, download, toJSON } from '../domain/export'
 import { AREA_COLORS, alive, type Area } from '../domain/types'
+import { signInWithGoogle, signInWithMagicLink, signOut, useAuth } from '../store/auth'
 import { importData, isDemo, storageStatus } from '../store/persist'
 import { addArea, deleteArea, setTheme, updateArea, useStore, type Theme } from '../store/store'
 import { toast } from '../store/ui'
@@ -12,6 +13,7 @@ import { areaVar, Segmented } from '../ui/primitives'
 export function Settings() {
   const theme = useStore((s) => s.theme)
   const data = useStore((s) => s.data)
+  const authStatus = useAuth((s) => s.status)
   const { list: areas } = useAreas()
   const fileRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState<{ persisted: boolean; usage: number | null } | null>(null)
@@ -43,6 +45,8 @@ export function Settings() {
         </div>
       </header>
 
+      <Account />
+
       <section className="set-section">
         <h3>Appearance</h3>
         <Segmented<Theme> label="theme" value={theme} onChange={setTheme} options={[{ value: 'system', label: 'System' }, { value: 'light', label: 'Light' }, { value: 'dark', label: 'Dark' }]} />
@@ -63,7 +67,10 @@ export function Settings() {
       <section className="set-section">
         <h3>Your data</h3>
         <p className="muted small">
-          Everything lives in this browser — no account, no server. {counts.activities} activities and {counts.completions.toLocaleString()} completions.
+          {authStatus === 'signedIn'
+            ? 'Signed in, but cloud sync isn\u2019t on yet — this data still lives only in this browser.'
+            : 'Everything lives in this browser — no account, no server.'}{' '}
+          {counts.activities} activities and {counts.completions.toLocaleString()} completions.
           Export regularly if it matters to you; a JSON export can be imported back here or on another device.
         </p>
         <div className="btn-row">
@@ -92,6 +99,69 @@ export function Settings() {
 
       <p className="colophon">Cadence · local-first · v0.1</p>
     </div>
+  )
+}
+
+function Account() {
+  const status = useAuth((s) => s.status)
+  const email = useAuth((s) => s.email)
+  const [emailInput, setEmailInput] = useState('')
+  const [sent, setSent] = useState(false)
+  const [busy, setBusy] = useState(false)
+
+  if (status === 'loading') return null
+
+  const onGoogle = async () => {
+    setBusy(true)
+    try { await signInWithGoogle() } catch { toast('Could not start Google sign-in') } finally { setBusy(false) }
+  }
+
+  const onMagicLink = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setBusy(true)
+    try {
+      await signInWithMagicLink(emailInput.trim())
+      setSent(true)
+    } catch (err) {
+      toast(err instanceof Error ? err.message : 'Could not send the link')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <section className="set-section">
+      <h3>Account</h3>
+      {status === 'signedIn' ? (
+        <>
+          <p className="muted small">Signed in as {email}.</p>
+          <button className="btn btn-ghost" onClick={() => signOut()}><LogOut size={15} />Sign out</button>
+        </>
+      ) : (
+        <>
+          <p className="muted small">Optional for now — signing in prepares your account for cloud sync in a later update. Your local data isn&rsquo;t touched by signing in.</p>
+          <div className="btn-row">
+            <button className="btn btn-ghost" onClick={onGoogle} disabled={busy}><LogIn size={15} />Sign in with Google</button>
+          </div>
+          {sent ? (
+            <p className="muted small">Link sent to {emailInput} — check your inbox.</p>
+          ) : (
+            <form className="row-gap" onSubmit={onMagicLink}>
+              <input
+                className="input"
+                type="email"
+                required
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                placeholder="you@example.com"
+                aria-label="Email for magic link"
+              />
+              <button className="btn btn-ghost" disabled={busy || !emailInput.trim()}><Mail size={15} />Send magic link</button>
+            </form>
+          )}
+        </>
+      )}
+    </section>
   )
 }
 
