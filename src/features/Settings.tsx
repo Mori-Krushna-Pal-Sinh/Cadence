@@ -4,7 +4,7 @@ import { todayKey } from '../domain/dates'
 import { activitiesCSV, completionsCSV, download, toJSON } from '../domain/export'
 import { AREA_COLORS, alive, type Area } from '../domain/types'
 import { signInWithGoogle, signInWithMagicLink, signOut, useAuth } from '../store/auth'
-import { importData, isDemo, storageStatus } from '../store/persist'
+import { flushNow, importData, isDemo, storageStatus } from '../store/persist'
 import { addArea, deleteArea, setTheme, updateArea, useStore, type Theme } from '../store/store'
 import { toast } from '../store/ui'
 import { useAreas } from '../ui/hooks'
@@ -113,13 +113,24 @@ function Account() {
 
   const onGoogle = async () => {
     setBusy(true)
-    try { await signInWithGoogle() } catch { toast('Could not start Google sign-in') } finally { setBusy(false) }
+    try {
+      // Guarantee any pending guest-mode edits are safely in IndexedDB before
+      // the browser navigates away to accounts.google.com — the debounce
+      // timer and pagehide handler alone aren't reliable across that redirect.
+      await flushNow()
+      await signInWithGoogle()
+    } catch {
+      toast('Could not start Google sign-in')
+    } finally {
+      setBusy(false)
+    }
   }
 
   const onMagicLink = async (e: React.FormEvent) => {
     e.preventDefault()
     setBusy(true)
     try {
+      await flushNow()
       await signInWithMagicLink(emailInput.trim())
       setSent(true)
     } catch (err) {

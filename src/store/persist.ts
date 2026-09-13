@@ -156,6 +156,18 @@ async function flush() {
   if (!isDemo) requestPersistentStorage()
 }
 
+/**
+ * Flushes any pending debounced write immediately. Exported specifically for
+ * callers about to trigger a cross-origin navigation (the Google OAuth
+ * button) — relying only on the pagehide/visibilitychange handlers above is
+ * NOT reliable there, since the browser can tear down the page before an
+ * async IndexedDB write started from one of those events finishes. A no-op
+ * if there's nothing currently pending.
+ */
+export async function flushNow(): Promise<void> {
+  await flush()
+}
+
 let askedPersist = false
 async function requestPersistentStorage() {
   if (askedPersist || !navigator.storage?.persist) return
