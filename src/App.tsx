@@ -5,6 +5,7 @@ import { Activities } from './features/Activities'
 import { Calendar } from './features/Calendar'
 import { Detail } from './features/Detail'
 import { Editor } from './features/Editor'
+import { MigrationPrompt } from './features/MigrationPrompt'
 import { Review } from './features/Review'
 import { Settings } from './features/Settings'
 import { Today } from './features/Today'
@@ -126,6 +127,7 @@ export function App() {
 
       <Detail />
       <Editor />
+      <MigrationPrompt />
       <Toasts />
       <TooltipLayer />
     </div>
