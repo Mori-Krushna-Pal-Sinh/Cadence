@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { Data } from '../domain/types'
+import { alive } from '../domain/types'
 import { supabase } from '../lib/supabase'
 import { replaceData } from './store'
 
@@ -98,9 +99,9 @@ export async function maybeOfferMigration(snapshot: Data, userId: string): Promi
     pending: true,
     busy: false,
     counts: {
-      areas: Object.keys(snapshot.areas).length,
-      activities: Object.keys(snapshot.activities).length,
-      completions: Object.keys(snapshot.completions).length,
+      areas: Object.values(snapshot.areas).filter(alive).length,
+      activities: Object.values(snapshot.activities).filter(alive).length,
+      completions: Object.values(snapshot.completions).filter(alive).length,
     },
   })
   // Deliberately not marked "checked" here — see the function comment above.
